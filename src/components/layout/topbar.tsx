@@ -7,7 +7,7 @@ export async function Topbar() {
   const user = session?.user;
 
   return (
-    <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b border-zinc-800 bg-zinc-950/80 px-4 backdrop-blur">
+    <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b border-zinc-800 bg-zinc-950/80 px-4 pl-14 backdrop-blur md:pl-4">
       {/* Search */}
       <div className="relative flex-1 max-w-md">
         <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />

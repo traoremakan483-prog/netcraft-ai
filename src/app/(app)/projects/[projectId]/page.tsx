@@ -9,12 +9,10 @@ import {
   Router,
   Network,
   Tag,
-  ShieldCheck,
   Plus,
-  Calculator,
-  Cog,
-  ClipboardCheck,
 } from "lucide-react";
+import { DeleteButton } from "@/components/ui/delete-button";
+import { AddBranchForm } from "@/components/branches/add-branch-form";
 
 type Props = { params: Promise<{ projectId: string }> };
 
@@ -59,53 +57,34 @@ export default async function ProjectOverviewPage({ params }: Props) {
     { label: "VLANs", value: project._count.vlans, icon: Tag },
   ];
 
-  const actions = [
-    {
-      label: "Add Branch",
-      href: `/projects/${project.id}`,
-      icon: Plus,
-      soon: false,
-    },
-    {
-      label: "VLSM",
-      href: `/projects/${project.id}/subnets`,
-      icon: Calculator,
-    },
-    {
-      label: "VLANs",
-      href: `/projects/${project.id}/vlans`,
-      icon: Tag,
-    },
-    {
-      label: "Configs",
-      href: `/projects/${project.id}/configs`,
-      icon: Cog,
-    },
-    {
-      label: "Validate",
-      href: `/projects/${project.id}/validation`,
-      icon: ClipboardCheck,
-    },
-  ];
-
   return (
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <Link
-          href="/projects"
-          className="inline-flex items-center gap-1 text-xs text-zinc-500 hover:text-zinc-300"
-        >
-          <ArrowLeft className="h-3 w-3" />
-          All projects
-        </Link>
-        <div className="mt-2 flex items-center gap-3">
-          <h1 className="text-2xl font-semibold tracking-tight text-zinc-50">
-            {project.name}
-          </h1>
-          <span className="rounded-full border border-zinc-700 px-2 py-0.5 font-mono text-[10px] text-zinc-400">
-            {project.type}
-          </span>
+        <div className="flex items-start justify-between">
+          <div>
+            <Link
+              href="/projects"
+              className="inline-flex items-center gap-1 text-xs text-zinc-500 hover:text-zinc-300"
+            >
+              <ArrowLeft className="h-3 w-3" />
+              All projects
+            </Link>
+            <div className="mt-2 flex items-center gap-3">
+              <h1 className="text-2xl font-semibold tracking-tight text-zinc-50">
+                {project.name}
+              </h1>
+              <span className="rounded-full border border-zinc-700 px-2 py-0.5 font-mono text-[10px] text-zinc-400">
+                {project.type}
+              </span>
+            </div>
+          </div>
+          <DeleteButton
+            endpoint={`/api/projects/${project.id}`}
+            redirectTo="/projects"
+            label="Delete project"
+            confirmMessage="Delete this project and all its data?"
+          />
         </div>
         {project.description && (
           <p className="mt-1 text-sm text-zinc-400">{project.description}</p>
@@ -137,26 +116,9 @@ export default async function ProjectOverviewPage({ params }: Props) {
         ))}
       </div>
 
-      {/* Quick actions */}
-      <div className="flex flex-wrap gap-2">
-        {actions.map(({ label, href, icon: Icon }) => (
-          <Link
-            key={label}
-            href={href}
-            className="inline-flex items-center gap-2 rounded-md border border-zinc-800 bg-zinc-900 px-3 py-2 text-xs font-medium text-zinc-300 transition-colors hover:border-zinc-700 hover:bg-zinc-800 hover:text-zinc-100"
-          >
-            <Icon className="h-3.5 w-3.5" />
-            {label}
-          </Link>
-        ))}
-      </div>
-
       {/* Branches */}
       <div>
-        <div className="mb-3 flex items-center justify-between">
-          <h2 className="text-sm font-semibold text-zinc-100">Branches</h2>
-          <AddBranchButton projectId={project.id} />
-        </div>
+        <h2 className="mb-3 text-sm font-semibold text-zinc-100">Branches</h2>
 
         {project.branches.length > 0 ? (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -204,20 +166,11 @@ export default async function ProjectOverviewPage({ params }: Props) {
             </p>
           </div>
         )}
+
+        <div className="mt-4">
+          <AddBranchForm projectId={project.id} />
+        </div>
       </div>
     </div>
-  );
-}
-
-// Inline client component for Add Branch
-function AddBranchButton({ projectId }: { projectId: string }) {
-  return (
-    <Link
-      href={`/projects/${projectId}/branches/new`}
-      className="inline-flex items-center gap-1 rounded-md border border-zinc-800 bg-zinc-900 px-3 py-1.5 text-xs text-zinc-400 hover:border-zinc-700 hover:bg-zinc-800 hover:text-zinc-100"
-    >
-      <Plus className="h-3 w-3" />
-      Add Branch
-    </Link>
   );
 }
