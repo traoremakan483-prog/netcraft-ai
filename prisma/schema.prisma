@@ -1,0 +1,213 @@
+// NetCraft AI — Prisma schema
+// Generated from NetCraft AI V1 Technical Specs (Section 4)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── AUTH ───
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  projects      Project[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ─── CORE MODEL ───
+
+enum ProjectType {
+  LAN
+  WAN
+  LAN_WAN
+}
+
+model Project {
+  id          String      @id @default(cuid())
+  name        String
+  description String?
+  type        ProjectType @default(LAN)
+  baseNetwork String? // e.g. "192.168.0.0/16" — base for VLSM
+  userId      String
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  branches    Branch[]
+  vlans       Vlan[]
+  subnets     Subnet[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model Branch {
+  id          String       @id @default(cuid())
+  name        String // e.g. "HQ", "Branch-KL", "Site-A"
+  location    String?
+  projectId   String
+  project     Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  departments Department[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+enum DepartmentType {
+  IT
+  SALES
+  HR
+  MANAGEMENT
+  SERVER_ROOM
+  RECEPTION
+  OPEN_SPACE
+  MEETING_ROOM
+  SECURITY
+  CUSTOM
+}
+
+model Department {
+  id             String         @id @default(cuid())
+  name           String
+  type           DepartmentType @default(CUSTOM)
+  estimatedHosts Int            @default(10)
+  branchId       String
+  branch         Branch         @relation(fields: [branchId], references: [id], onDelete: Cascade)
+  devices        Device[]
+  subnet         Subnet?
+  vlan           Vlan?          @relation(fields: [vlanId], references: [id])
+  vlanId         String?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+}
+
+enum DeviceType {
+  // Layer 3
+  ROUTER
+  FIREWALL
+  // Layer 2
+  CORE_SWITCH
+  DISTRIBUTION_SWITCH
+  ACCESS_SWITCH
+  // Wireless
+  AUTONOMOUS_AP
+  LIGHTWEIGHT_AP
+  WLC
+  // Servers
+  DHCP_SERVER
+  DNS_SERVER
+  WEB_SERVER
+  FILE_SERVER
+  EMAIL_SERVER
+  NTP_SERVER
+  // Endpoints
+  PC
+  LAPTOP
+  IP_PHONE
+  PRINTER
+  CCTV
+  IOT_DEVICE
+}
+
+model Device {
+  id           String     @id @default(cuid())
+  name         String // Display name
+  hostname     String? // Auto-generated: SW-HQ-ACCESS-01
+  type         DeviceType
+  ipAddress    String?
+  macAddress   String?
+  notes        String?
+  departmentId String
+  department   Department @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+  configs      Config[]
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
+
+// ─── NETWORK ENGINE MODELS ───
+
+model Subnet {
+  id               String     @id @default(cuid())
+  networkAddress   String // 192.168.1.0
+  broadcastAddress String // 192.168.1.63
+  subnetMask       String // 255.255.255.192
+  cidr             Int // 26
+  firstHost        String // 192.168.1.1
+  lastHost         String // 192.168.1.62
+  wildcardMask     String // 0.0.0.63
+  totalHosts       Int // 64
+  usableHosts      Int // 62
+  gatewayAddress   String // 192.168.1.1 (first host by default)
+  departmentId    String     @unique
+  department      Department @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+  projectId       String
+  project         Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdAt       DateTime   @default(now())
+}
+
+model Vlan {
+  id          String       @id @default(cuid())
+  number      Int // 10, 20, 30...
+  name        String // VLAN_IT, VLAN_SALES
+  description String?
+  projectId   String
+  project     Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  departments Department[]
+  createdAt   DateTime     @default(now())
+}
+
+enum ConfigType {
+  SWITCH
+  ROUTER
+  AP
+}
+
+model Config {
+  id        String     @id @default(cuid())
+  type      ConfigType
+  content   String     @db.Text // The full CLI config
+  deviceId  String
+  device    Device     @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
