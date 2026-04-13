@@ -10,6 +10,7 @@ import {
   Network,
   Menu,
   X,
+  Sparkles,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -29,7 +30,6 @@ export function Sidebar() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
-  // Close sidebar on route change (mobile)
   useEffect(() => {
     setOpen(false);
   }, [pathname]);
@@ -37,18 +37,22 @@ export function Sidebar() {
   const sidebarContent = (
     <>
       {/* Logo */}
-      <div className="flex h-14 items-center justify-between border-b border-zinc-800 px-4">
-        <Link href="/dashboard" className="flex items-center gap-2">
-          <div className="flex h-7 w-7 items-center justify-center rounded-md bg-blue-600">
+      <div className="flex h-14 items-center justify-between border-b border-zinc-800/60 px-4">
+        <Link href="/dashboard" className="group flex items-center gap-2.5">
+          <div className="relative flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-blue-700 shadow-md shadow-blue-500/20 transition-shadow duration-300 group-hover:shadow-blue-500/40">
             <Network className="h-4 w-4 text-white" />
+            <div className="absolute inset-0 rounded-lg bg-gradient-to-br from-white/20 to-transparent" />
           </div>
-          <span className="font-semibold tracking-tight text-zinc-50">
-            NetCraft <span className="text-blue-500">AI</span>
+          <span className="font-bold tracking-tight text-zinc-50">
+            NetCraft{" "}
+            <span className="bg-gradient-to-r from-blue-400 to-blue-500 bg-clip-text text-transparent">
+              AI
+            </span>
           </span>
         </Link>
         <button
           onClick={() => setOpen(false)}
-          className="flex h-8 w-8 items-center justify-center rounded-md text-zinc-400 hover:bg-zinc-800 hover:text-zinc-100 md:hidden"
+          className="flex h-8 w-8 items-center justify-center rounded-lg text-zinc-400 transition-colors hover:bg-zinc-800 hover:text-zinc-100 md:hidden"
         >
           <X className="h-5 w-5" />
         </button>
@@ -56,7 +60,7 @@ export function Sidebar() {
 
       {/* Nav */}
       <nav className="flex-1 px-3 py-4">
-        <p className="px-2 pb-2 text-[10px] uppercase tracking-wider text-zinc-500">
+        <p className="px-2 pb-3 text-[10px] font-semibold uppercase tracking-widest text-zinc-600">
           Navigation
         </p>
         <ul className="space-y-1">
@@ -69,13 +73,21 @@ export function Sidebar() {
                 <Link
                   href={item.href}
                   className={cn(
-                    "flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors",
+                    "group relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200",
                     active
-                      ? "bg-zinc-800 text-zinc-50"
-                      : "text-zinc-400 hover:bg-zinc-900 hover:text-zinc-100"
+                      ? "bg-blue-500/10 text-blue-400"
+                      : "text-zinc-400 hover:bg-zinc-800/60 hover:text-zinc-100"
                   )}
                 >
-                  <Icon className="h-4 w-4" />
+                  {active && (
+                    <div className="absolute left-0 top-1/2 h-5 w-0.5 -translate-y-1/2 rounded-full bg-blue-500 shadow-sm shadow-blue-500/50" />
+                  )}
+                  <Icon
+                    className={cn(
+                      "h-4 w-4 transition-colors",
+                      active ? "text-blue-400" : "text-zinc-500 group-hover:text-zinc-300"
+                    )}
+                  />
                   <span>{item.label}</span>
                 </Link>
               </li>
@@ -84,11 +96,24 @@ export function Sidebar() {
         </ul>
       </nav>
 
+      {/* Pro badge */}
+      <div className="mx-3 mb-3 rounded-xl border border-zinc-800/60 bg-gradient-to-br from-zinc-900 to-zinc-900/60 p-3">
+        <div className="flex items-center gap-2">
+          <Sparkles className="h-4 w-4 text-blue-400" />
+          <span className="text-xs font-semibold text-zinc-200">
+            NetCraft AI
+          </span>
+        </div>
+        <p className="mt-1 text-[10px] leading-relaxed text-zinc-500">
+          Network automation platform
+        </p>
+      </div>
+
       {/* Footer */}
-      <div className="border-t border-zinc-800 px-4 py-3 text-[11px] text-zinc-500">
+      <div className="border-t border-zinc-800/60 px-4 py-3 text-[11px] text-zinc-600">
         <span className="font-mono">v1.0.0</span>
-        <span className="mx-2 text-zinc-700">·</span>
-        <span>NetCraft AI</span>
+        <span className="mx-2 text-zinc-800">·</span>
+        <span>Built with precision</span>
       </div>
     </>
   );
@@ -98,7 +123,7 @@ export function Sidebar() {
       {/* Mobile hamburger */}
       <button
         onClick={() => setOpen(true)}
-        className="fixed left-3 top-3 z-50 flex h-10 w-10 items-center justify-center rounded-md border border-zinc-800 bg-zinc-950 text-zinc-400 hover:text-zinc-100 md:hidden"
+        className="fixed left-3 top-3 z-50 flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-800 bg-zinc-950/90 text-zinc-400 shadow-lg backdrop-blur-sm transition-all hover:border-zinc-700 hover:text-zinc-100 md:hidden"
         aria-label="Open menu"
       >
         <Menu className="h-5 w-5" />
@@ -107,7 +132,7 @@ export function Sidebar() {
       {/* Mobile overlay */}
       {open && (
         <div
-          className="fixed inset-0 z-40 bg-black/60 md:hidden"
+          className="fixed inset-0 z-40 bg-black/70 backdrop-blur-sm animate-fade-in md:hidden"
           onClick={() => setOpen(false)}
         />
       )}
@@ -115,7 +140,7 @@ export function Sidebar() {
       {/* Mobile drawer */}
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-50 flex w-64 flex-col bg-zinc-950 transition-transform duration-200 md:hidden",
+          "fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-r border-zinc-800/60 bg-zinc-950/95 backdrop-blur-xl transition-transform duration-300 ease-out md:hidden",
           open ? "translate-x-0" : "-translate-x-full"
         )}
       >
@@ -123,7 +148,7 @@ export function Sidebar() {
       </aside>
 
       {/* Desktop sidebar */}
-      <aside className="hidden border-r border-zinc-800 bg-zinc-950 md:flex md:w-60 md:shrink-0 md:flex-col">
+      <aside className="hidden border-r border-zinc-800/60 bg-zinc-950/80 backdrop-blur-sm md:flex md:w-60 md:shrink-0 md:flex-col">
         {sidebarContent}
       </aside>
     </>

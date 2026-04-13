@@ -13,6 +13,7 @@ export interface ValidationItem {
 }
 
 interface ProjectData {
+  type: "LAN" | "WAN" | "LAN_WAN";
   baseNetwork: string | null;
   branches: {
     name: string;
@@ -54,6 +55,39 @@ export function validateProject(data: ProjectData): ValidationItem[] {
       category: "addressing",
       message: "No base network defined",
       fix: "Set a base network (e.g. 192.168.0.0/16) in project settings",
+    });
+  }
+
+  // ─── PROJECT TYPE CHECKS ───
+
+  const allDepts = data.branches.flatMap((b) => b.departments);
+
+  if (data.type === "LAN" && data.branches.length > 1) {
+    items.push({
+      severity: "warning",
+      category: "topology",
+      message: "LAN project has multiple branches — consider switching to WAN or LAN+WAN",
+      fix: "Change project type or remove extra branches",
+    });
+  }
+
+  if ((data.type === "WAN" || data.type === "LAN_WAN") && data.branches.length < 2) {
+    items.push({
+      severity: "warning",
+      category: "topology",
+      message: `${data.type} project should have at least 2 branches (sites)`,
+      fix: "Add more branches or switch to LAN if this is a single site",
+    });
+  }
+
+  if (allDepts.length === 0) {
+    items.push({
+      severity: "error",
+      category: "topology",
+      message: "No departments defined — add departments to plan your network",
+      fix: data.type === "LAN"
+        ? "Add departments (IT, Sales, Server Room, etc.)"
+        : "Add branches first, then add departments to each branch",
     });
   }
 

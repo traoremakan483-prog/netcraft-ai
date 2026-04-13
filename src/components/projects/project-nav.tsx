@@ -24,13 +24,11 @@ export function ProjectNav({ projectId }: { projectId: string }) {
   const base = `/projects/${projectId}`;
 
   return (
-    <nav className="mb-6 flex gap-1 overflow-x-auto border-b border-zinc-800 pb-px">
+    <nav className="mb-6 flex gap-1 overflow-x-auto border-b border-zinc-800/60 pb-px">
       {TABS.map((tab) => {
         const href = `${base}${tab.href}`;
         const active =
-          tab.href === ""
-            ? pathname === base
-            : pathname.startsWith(href);
+          tab.href === "" ? pathname === base : pathname.startsWith(href);
         const Icon = tab.icon;
 
         return (
@@ -38,14 +36,22 @@ export function ProjectNav({ projectId }: { projectId: string }) {
             key={tab.href}
             href={href}
             className={cn(
-              "flex items-center gap-1.5 whitespace-nowrap border-b-2 px-3 py-2 text-xs font-medium transition-colors",
+              "group relative flex items-center gap-1.5 whitespace-nowrap px-4 py-2.5 text-xs font-semibold transition-all duration-200",
               active
-                ? "border-blue-500 text-zinc-100"
-                : "border-transparent text-zinc-500 hover:text-zinc-300"
+                ? "text-blue-400"
+                : "text-zinc-500 hover:text-zinc-300"
             )}
           >
-            <Icon className="h-3.5 w-3.5" />
+            <Icon
+              className={cn(
+                "h-3.5 w-3.5 transition-colors",
+                active ? "text-blue-400" : "text-zinc-600 group-hover:text-zinc-400"
+              )}
+            />
             {tab.label}
+            {active && (
+              <div className="absolute bottom-0 left-2 right-2 h-0.5 rounded-full bg-blue-500 shadow-sm shadow-blue-500/50" />
+            )}
           </Link>
         );
       })}

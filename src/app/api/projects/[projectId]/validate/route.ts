@@ -55,6 +55,7 @@ export async function GET(_req: Request, { params }: Ctx) {
   });
 
   const items = validateProject({
+    type: project.type as "LAN" | "WAN" | "LAN_WAN",
     baseNetwork: project.baseNetwork,
     branches: project.branches,
     vlans: project.vlans,

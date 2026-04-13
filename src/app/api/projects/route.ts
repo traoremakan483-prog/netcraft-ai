@@ -91,6 +91,20 @@ export async function POST(req: Request) {
     data: {
       ...parsed.data,
       userId: session.user.id,
+      // For LAN projects, auto-create a single implicit branch
+      ...(parsed.data.type === "LAN"
+        ? {
+            branches: {
+              create: {
+                name: parsed.data.name,
+                location: "Main site",
+              },
+            },
+          }
+        : {}),
+    },
+    include: {
+      branches: parsed.data.type === "LAN",
     },
   });
 

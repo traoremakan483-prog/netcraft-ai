@@ -50,6 +50,14 @@ export async function POST(req: Request, { params }: Ctx) {
   if (!project)
     return NextResponse.json({ error: "Not found" }, { status: 404 });
 
+  // LAN projects have a single auto-created branch — no manual branches allowed
+  if (project.type === "LAN") {
+    return NextResponse.json(
+      { error: "LAN projects have a single site. Switch to WAN or LAN+WAN to add branches." },
+      { status: 400 }
+    );
+  }
+
   const body = await req.json();
   const parsed = createSchema.safeParse(body);
   if (!parsed.success)

@@ -9,6 +9,8 @@ import {
   AlertTriangle,
   Info,
   Wrench,
+  ShieldCheck,
+  Sparkles,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -60,7 +62,7 @@ export function ValidationPanel({
         <button
           onClick={handleValidate}
           disabled={loading}
-          className="flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-500 disabled:opacity-50"
+          className="group flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-blue-500 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-500/20 transition-all duration-300 hover:shadow-blue-500/40 hover:brightness-110 disabled:opacity-50"
         >
           {loading ? (
             <Loader2 className="h-4 w-4 animate-spin" />
@@ -71,16 +73,16 @@ export function ValidationPanel({
         </button>
 
         {summary && (
-          <div className="flex items-center gap-3 text-xs">
-            <span className="flex items-center gap-1 rounded-full bg-red-500/10 px-2.5 py-1 text-red-400">
+          <div className="flex items-center gap-2 text-xs">
+            <span className="flex items-center gap-1.5 rounded-lg bg-red-500/10 px-3 py-1.5 font-semibold text-red-400">
               <AlertCircle className="h-3 w-3" />
               {summary.errors} errors
             </span>
-            <span className="flex items-center gap-1 rounded-full bg-amber-500/10 px-2.5 py-1 text-amber-400">
+            <span className="flex items-center gap-1.5 rounded-lg bg-amber-500/10 px-3 py-1.5 font-semibold text-amber-400">
               <AlertTriangle className="h-3 w-3" />
               {summary.warnings} warnings
             </span>
-            <span className="flex items-center gap-1 rounded-full bg-blue-500/10 px-2.5 py-1 text-blue-400">
+            <span className="flex items-center gap-1.5 rounded-lg bg-blue-500/10 px-3 py-1.5 font-semibold text-blue-400">
               <Info className="h-3 w-3" />
               {summary.recommendations} recs
             </span>
@@ -116,25 +118,37 @@ export function ValidationPanel({
           )}
         </div>
       ) : summary ? (
-        <div className="rounded-lg border border-green-500/30 bg-green-500/5 p-8 text-center">
-          <ClipboardCheck className="mx-auto h-10 w-10 text-green-500" />
-          <h2 className="mt-3 text-lg font-semibold text-green-400">
-            All clear
-          </h2>
-          <p className="mt-1 text-sm text-zinc-400">
-            No issues found. Your network design looks good.
-          </p>
+        <div className="relative overflow-hidden rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-10 text-center">
+          <div className="pointer-events-none absolute inset-0">
+            <div className="absolute left-1/2 top-1/2 h-32 w-32 -translate-x-1/2 -translate-y-1/2 rounded-full bg-emerald-500/10 blur-3xl" />
+          </div>
+          <div className="relative">
+            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-500/10">
+              <ShieldCheck className="h-7 w-7 text-emerald-400" />
+            </div>
+            <h2 className="text-xl font-bold text-emerald-400">All clear</h2>
+            <p className="mt-2 text-sm text-zinc-400">
+              No issues found. Your network design looks good.
+            </p>
+          </div>
         </div>
       ) : (
-        <div className="rounded-lg border border-dashed border-zinc-800 bg-zinc-900/40 p-10 text-center">
-          <ClipboardCheck className="mx-auto h-10 w-10 text-zinc-700" />
-          <h2 className="mt-3 text-lg font-semibold text-zinc-100">
-            Not validated yet
-          </h2>
-          <p className="mt-1 text-sm text-zinc-400">
-            Click &quot;Run Validation&quot; to check for errors and best
-            practices.
-          </p>
+        <div className="relative overflow-hidden rounded-2xl border border-dashed border-zinc-800 bg-zinc-900/30 p-12 text-center">
+          <div className="pointer-events-none absolute inset-0">
+            <div className="absolute left-1/2 top-1/2 h-32 w-32 -translate-x-1/2 -translate-y-1/2 rounded-full bg-blue-500/10 blur-3xl" />
+          </div>
+          <div className="relative">
+            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-zinc-800/60 text-zinc-500">
+              <Sparkles className="h-7 w-7" />
+            </div>
+            <h2 className="text-xl font-bold text-zinc-100">
+              Not validated yet
+            </h2>
+            <p className="mt-2 text-sm text-zinc-500">
+              Click &quot;Run Validation&quot; to check for errors and best
+              practices.
+            </p>
+          </div>
         </div>
       )}
     </div>
@@ -176,28 +190,49 @@ function Section({
 
   return (
     <div>
-      <h3 className={cn("mb-2 flex items-center gap-2 text-sm font-semibold", c.text)}>
+      <h3
+        className={cn(
+          "mb-3 flex items-center gap-2 text-sm font-bold",
+          c.text
+        )}
+      >
         <Icon className="h-4 w-4" />
         {title} ({items.length})
       </h3>
-      <div className={cn("divide-y divide-zinc-800 rounded-lg border", c.border, c.bg)}>
+      <div
+        className={cn(
+          "divide-y divide-zinc-800/40 overflow-hidden rounded-xl border",
+          c.border,
+          c.bg
+        )}
+      >
         {items.map((item, i) => (
-          <div key={i} className="px-4 py-3">
+          <div
+            key={i}
+            className="px-4 py-3.5 transition-colors hover:bg-white/[0.02]"
+          >
             <div className="flex items-start justify-between gap-3">
               <div>
-                <p className="text-sm text-zinc-200">{item.message}</p>
+                <p className="text-sm font-medium text-zinc-200">
+                  {item.message}
+                </p>
                 {item.target && (
-                  <span className="mt-0.5 inline-block rounded border border-zinc-700 px-1.5 py-0.5 font-mono text-[10px] text-zinc-400">
+                  <span className="mt-1 inline-block rounded-md border border-zinc-700/60 bg-zinc-800/60 px-2 py-0.5 font-mono text-[10px] text-zinc-400">
                     {item.target}
                   </span>
                 )}
               </div>
-              <span className={cn("shrink-0 rounded-full px-2 py-0.5 text-[10px]", c.badge)}>
+              <span
+                className={cn(
+                  "shrink-0 rounded-lg px-2.5 py-1 text-[10px] font-semibold",
+                  c.badge
+                )}
+              >
                 {item.category}
               </span>
             </div>
             {item.fix && (
-              <p className="mt-1.5 flex items-center gap-1 text-xs text-zinc-500">
+              <p className="mt-2 flex items-center gap-1.5 text-xs text-zinc-500">
                 <Wrench className="h-3 w-3" />
                 {item.fix}
               </p>
