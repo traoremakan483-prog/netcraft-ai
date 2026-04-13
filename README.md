@@ -4,8 +4,7 @@
 
 **NetCraft AI** est une plateforme SaaS de planification et de configuration automatisee d'infrastructure reseau. L'utilisateur decrit la topologie de son reseau (sites, departements, equipements), et l'application genere automatiquement le plan d'adressage IP (VLSM), les VLANs, les configurations Cisco IOS pour chaque equipement, et valide l'ensemble du design selon 16 regles de bonnes pratiques.
 
-<!-- Remplacer par le vrai lien apres deploiement -->
-<!-- **[Acceder a l'application](https://netcraft-ai.vercel.app)** -->
+**[Acceder a l'application](https://netcraft-ai.vercel.app)**
 
 ![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)
