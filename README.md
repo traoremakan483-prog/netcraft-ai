@@ -1,10 +1,10 @@
 # NetCraft AI
 
-> Tu decris ton reseau. NetCraft AI le construit.
+> You describe your network. NetCraft AI builds it.
 
-**NetCraft AI** est une plateforme SaaS de planification et de configuration automatisee d'infrastructure reseau. L'utilisateur decrit la topologie de son reseau (sites, departements, equipements), et l'application genere automatiquement le plan d'adressage IP (VLSM), les VLANs, les configurations Cisco IOS pour chaque equipement, et valide l'ensemble du design selon 16 regles de bonnes pratiques.
+**NetCraft AI** is a SaaS platform for automated network infrastructure planning and configuration. Users describe their network topology (sites, departments, devices), and the application automatically generates the IP addressing plan (VLSM), VLANs, Cisco IOS configurations for each device, and validates the entire design against 16 best-practice rules.
 
-**[Acceder a l'application](https://netcraft-ai.vercel.app)**
+**[Launch the App](https://netcraft-ai.vercel.app)**
 
 ![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)
@@ -14,267 +14,267 @@
 
 ---
 
-## Table des matieres
+## Table of Contents
 
-- [Le probleme](#le-probleme)
-- [La solution](#la-solution)
-- [Fonctionnalites detaillees](#fonctionnalites-detaillees)
-- [Types de projets](#types-de-projets)
-- [Guide d'utilisation](#guide-dutilisation)
-- [Architecture technique](#architecture-technique)
-- [Stack technique](#stack-technique)
-- [Structure du projet](#structure-du-projet)
-- [Modele de donnees](#modele-de-donnees)
-- [Les moteurs (engines)](#les-moteurs-engines)
-- [Installation locale](#installation-locale)
-- [Deploiement](#deploiement)
-- [Securite](#securite)
-- [Auteur](#auteur)
-
----
-
-## Le probleme
-
-Quand on concoie un reseau d'entreprise, on doit :
-
-1. **Calculer manuellement les sous-reseaux** (VLSM) — trouver les masques, les plages d'adresses, les passerelles, eviter les chevauchements
-2. **Attribuer les VLANs** — decider quel numero pour quel departement, ne pas oublier le VLAN natif et le blackhole
-3. **Ecrire les configurations Cisco** — des dizaines de lignes de CLI par equipement, avec les VLANs, le trunking, DHCP, SSH, STP...
-4. **Verifier que tout est coherent** — pas de chevauchement d'IP, pas de VLAN inutilise, pas de faille de securite
-
-Ce processus est long, repetitif et source d'erreurs. Un oubli dans un masque, un mauvais numero de VLAN, un port non securise — et le reseau tombe ou devient vulnerable.
-
-## La solution
-
-**NetCraft AI automatise tout ca.** En quelques clics :
-
-- Tu definis ta topologie (sites, departements, equipements)
-- Tu cliques "Calculate VLSM" et tous les sous-reseaux sont generes optimalement
-- Tu cliques "Auto-suggest VLANs" et chaque departement recoit un VLAN adapte a son type
-- Tu cliques "Generate Configs" et tu obtiens des configurations Cisco IOS completes, prete a copier-coller
-- Tu cliques "Run Validation" et 16 regles verifient que ton design est correct et securise
+- [The Problem](#the-problem)
+- [The Solution](#the-solution)
+- [Features](#features)
+- [Project Types](#project-types)
+- [User Guide](#user-guide)
+- [Technical Architecture](#technical-architecture)
+- [Tech Stack](#tech-stack)
+- [Project Structure](#project-structure)
+- [Data Model](#data-model)
+- [Core Engines](#core-engines)
+- [Local Installation](#local-installation)
+- [Deployment](#deployment)
+- [Security](#security)
+- [Author](#author)
 
 ---
 
-## Fonctionnalites detaillees
+## The Problem
 
-### 1. Gestion de projets
+When designing an enterprise network, you have to:
 
-- Creer, modifier, supprimer des projets reseau
-- Choisir le type de topologie : LAN, WAN, ou LAN+WAN
-- Definir l'espace d'adressage de base (ex: `192.168.10.0/24`, `10.0.0.0/8`)
-- Dashboard avec statistiques en temps reel (nombre de projets, equipements, sous-reseaux)
+1. **Manually calculate subnets** (VLSM) — find masks, address ranges, gateways, avoid overlaps
+2. **Assign VLANs** — decide which number for which department, remember native and blackhole VLANs
+3. **Write Cisco configurations** — dozens of CLI lines per device, with VLANs, trunking, DHCP, SSH, STP...
+4. **Verify everything is consistent** — no IP overlap, no unused VLANs, no security holes
 
-### 2. Topologie reseau
+This process is long, repetitive, and error-prone. One wrong mask, one bad VLAN number, one unsecured port — and the network goes down or becomes vulnerable.
 
-**Pour un projet LAN (site unique) :**
-- Ajouter directement des departements (IT, Ventes, RH, Salle serveur, etc.)
-- Ajouter des equipements dans chaque departement
+## The Solution
 
-**Pour un projet WAN ou LAN+WAN (multi-sites) :**
-- Creer des branches/sites (ex: Siege, Succursale Bamako, Bureau Dakar)
-- Chaque branche contient ses propres departements et equipements
+**NetCraft AI automates all of that.** In just a few clicks:
 
-### 3. Gestion des equipements
+- Define your topology (sites, departments, devices)
+- Click **"Calculate VLSM"** and all subnets are optimally generated
+- Click **"Auto-suggest VLANs"** and each department gets a VLAN matching its role
+- Click **"Generate Configs"** and get complete Cisco IOS configurations, ready to copy-paste
+- Click **"Run Validation"** and 16 rules verify your design is correct and secure
 
-Chaque departement peut contenir des equipements classes par categorie :
+---
 
-| Categorie | Types d'equipements |
-|-----------|-------------------|
-| **Routeurs** | Core Router, Edge Router, Branch Router |
-| **Switches** | Switch Layer 2, Switch Layer 3, PoE Switch |
-| **Points d'acces** | Access Point (AP) |
-| **Terminaux** | PC, Laptop, Telephone IP, Imprimante, Camera IP, Serveur |
+## Features
 
-Chaque equipement reseau (routeur, switch, AP) recoit automatiquement un **hostname Cisco** selon la convention :
+### 1. Project Management
+
+- Create, edit, and delete network projects
+- Choose the topology type: LAN, WAN, or LAN+WAN
+- Define the base address space (e.g., `192.168.10.0/24`, `10.0.0.0/8`)
+- Dashboard with real-time statistics (projects, devices, subnets)
+
+### 2. Network Topology
+
+**For LAN projects (single site):**
+- Add departments directly (IT, Sales, HR, Server Room, etc.)
+- Add devices within each department
+
+**For WAN or LAN+WAN projects (multi-site):**
+- Create branches/sites (e.g., HQ, Branch Office Bamako, Office Dakar)
+- Each branch contains its own departments and devices
+
+### 3. Device Management
+
+Each department can contain devices organized by category:
+
+| Category | Device Types |
+|----------|-------------|
+| **Routers** | Core Router, Edge Router, Branch Router |
+| **Switches** | Layer 2 Switch, Layer 3 Switch, PoE Switch |
+| **Access Points** | Access Point (AP) |
+| **Endpoints** | PC, Laptop, IP Phone, Printer, IP Camera, Server |
+
+Every network device (router, switch, AP) automatically receives a **Cisco hostname** following the convention:
 ```
-[TYPE]-[CODE_SITE]-[ROLE]-[NUMERO]
+[TYPE]-[SITE_CODE]-[ROLE]-[NUMBER]
 ```
-Exemples : `RTR-HQ-CORE-01`, `SW-BKL-ACCESS-02`, `AP-DKR-WIFI-01`
+Examples: `RTR-HQ-CORE-01`, `SW-BKL-ACCESS-02`, `AP-DKR-WIFI-01`
 
-### 4. Calcul VLSM automatique
+### 4. Automatic VLSM Calculation
 
-Le moteur VLSM (Variable Length Subnet Masking) :
-- Prend l'espace d'adressage de base et la liste de tous les departements
-- Trie par nombre d'hotes (du plus grand au plus petit)
-- Calcule le plus petit bloc en puissance de 2 qui satisfait chaque departement
-- Aligne les sous-reseaux sur les frontieres correctes
-- Verifie qu'il n'y a pas de debordement
+The VLSM (Variable Length Subnet Masking) engine:
+- Takes the base address space and the list of all departments
+- Sorts by host count (largest first for optimal allocation)
+- Calculates the smallest power-of-2 block that fits each department
+- Aligns subnets on correct boundaries
+- Verifies no overflow occurs
 
-**Resultat :** Un tableau complet avec pour chaque departement :
-- Adresse reseau, masque, CIDR, broadcast
-- Premier et dernier hote utilisable
-- Adresse de passerelle
-- Masque wildcard
-- Capacite totale et taux d'utilisation
+**Result:** A complete table showing for each department:
+- Network address, mask, CIDR, broadcast
+- First and last usable host
+- Gateway address
+- Wildcard mask
+- Total capacity and utilization rate
 
-### 5. Attribution automatique des VLANs
+### 5. Automatic VLAN Assignment
 
-Le moteur VLAN attribue automatiquement un numero de VLAN selon le type de departement :
+The VLAN engine automatically assigns a VLAN number based on department type:
 
-| Type de departement | VLAN |
-|-------------------|------|
+| Department Type | VLAN |
+|----------------|------|
 | Management | 10 |
 | IT | 20 |
-| Sales / Ventes | 30 |
-| HR / RH | 40 |
+| Sales | 30 |
+| HR | 40 |
 | Server Room | 50 |
 | Reception | 60 |
 | Open Space | 70 |
 | Meeting Room | 80 |
 | Security | 90 |
 
-Deux VLANs speciaux sont toujours ajoutes :
-- **VLAN 99 (NATIVE)** — VLAN natif pour les trunks
-- **VLAN 999 (BLACKHOLE)** — VLAN de securite pour les ports inutilises
+Two special VLANs are always added:
+- **VLAN 99 (NATIVE)** — Native VLAN for trunk links
+- **VLAN 999 (BLACKHOLE)** — Security VLAN for unused ports
 
-### 6. Generation de configurations Cisco IOS
+### 6. Cisco IOS Configuration Generation
 
-Trois generateurs de configurations :
+Three configuration generators:
 
-**Switch (Layer 2/3) :**
-- Declaration de tous les VLANs
-- Ports d'acces avec VLAN correct
-- Ports trunk avec VLANs autorises
-- Ports inutilises en VLAN 999 + shutdown (securite)
+**Switch (Layer 2/3):**
+- All VLAN declarations
+- Access ports with correct VLAN assignment
+- Trunk ports with allowed VLANs
+- Unused ports in VLAN 999 + shutdown (security hardening)
 - STP mode rapid-pvst
-- Interface de management avec IP
+- Management interface with IP
 
-**Routeur :**
-- Sous-interfaces router-on-a-stick pour chaque VLAN
-- Pools DHCP avec adresses exclues (passerelle + serveurs)
-- Configuration SSH (version 2, timeout, tentatives max)
-- Route par defaut
-- Banniere de connexion
-- `enable secret` et `service password-encryption`
+**Router:**
+- Router-on-a-stick sub-interfaces for each VLAN
+- DHCP pools with excluded addresses (gateway + servers)
+- SSH v2 configuration with `crypto key generate rsa modulus 2048`
+- Default route
+- Login banner
+- `enable secret` and `service password-encryption`
 
-**Point d'acces (AP) :**
-- SSID avec WPA2-PSK
-- Radios dual-band (2.4 GHz + 5 GHz)
-- Interface BVI pour le management
-- Configuration de base securisee
+**Access Point (AP):**
+- SSID with WPA2-PSK
+- Dual-band radios (2.4 GHz + 5 GHz)
+- BVI interface for management
+- Secure base configuration
 
-Chaque config est affichee avec :
-- Numeros de ligne
-- Coloration syntaxique
-- Bouton copier dans le presse-papiers
-- Bouton telecharger en `.txt`
+Each config is displayed with:
+- Line numbers
+- Syntax highlighting
+- Copy to clipboard button
+- Download as `.txt` button
 
-### 7. Validation du design (16 regles)
+### 7. Design Validation (16 Rules)
 
-Le moteur de validation verifie :
+The validation engine checks:
 
-**Erreurs (bloquantes) :**
-- Pas de reseau de base defini
-- Debordement VLSM (espace insuffisant)
-- Chevauchement de sous-reseaux
-- Conflits d'adresses IP
-- Aucun departement defini
-- Incoherence type de projet / nombre de branches
+**Errors (blocking):**
+- No base network defined
+- VLSM overflow (insufficient address space)
+- Subnet overlaps
+- IP address conflicts
+- No departments defined
+- Project type / branch count mismatch
 
-**Avertissements :**
-- Pas de `enable secret` dans les configs
-- Pas de passerelle par defaut
-- VLAN 1 utilise (risque de securite)
-- Trunking sur des ports non prevus
-- Projet WAN avec moins de 2 branches
+**Warnings:**
+- No `enable secret` in configs
+- No default gateway
+- VLAN 1 in use (security risk)
+- Unrestricted trunk ports
+- WAN project with fewer than 2 branches
 
-**Recommandations :**
-- Ajouter un `exec-timeout` sur les lignes console/vty
-- Exclure les adresses de passerelle dans les pools DHCP
-- Securiser les ports inutilises
-- Ajouter une banniere de connexion
-- Utiliser SSH au lieu de Telnet
-- Retirer les VLANs non assignes
+**Recommendations:**
+- Add `exec-timeout` on console/vty lines
+- Exclude gateway addresses from DHCP pools
+- Secure unused ports
+- Add login banner
+- Use SSH instead of Telnet
+- Remove unassigned VLANs
 
-### 8. Interface utilisateur
+### 8. User Interface
 
-- **Dark mode** exclusif avec design glassmorphism
-- **Animations fluides** : fade-in, slide-up, hover lift sur les cartes
-- **Gradients** sur les boutons, les titres, et les accents
-- **Responsive** : sidebar desktop, drawer mobile avec hamburger
-- **Etats de chargement** : squelettes animes sur chaque page
-- **Navigation par onglets** sur les projets (Overview, Subnets, VLANs, Configs, Validation)
-
----
-
-## Types de projets
-
-### LAN — Reseau local (site unique)
-
-```
-Projet "Campus HQ"
-├── Departement IT (30 postes)
-├── Departement Ventes (20 postes)
-├── Salle serveur (10 postes)
-└── Open Space (50 postes)
-```
-
-Ideal pour : un bureau, un campus, un batiment. L'utilisateur ajoute directement ses departements sans passer par des branches.
-
-### WAN — Reseau etendu (multi-sites)
-
-```
-Projet "Reseau National"
-├── Branche Siege (Bamako)
-│   ├── IT (30 postes)
-│   └── Direction (10 postes)
-├── Branche Succursale (Dakar)
-│   ├── Ventes (15 postes)
-│   └── Support (10 postes)
-└── Branche Bureau (Abidjan)
-    └── Open Space (20 postes)
-```
-
-Ideal pour : une entreprise avec plusieurs sites geographiques. Chaque branche represente un site physique.
-
-### LAN+WAN — Combine
-
-Meme structure que WAN, mais avec l'intention de planifier le reseau local de chaque site en detail. Le comportement dans l'application est identique a WAN.
+- **Dark mode** exclusive with glassmorphism design
+- **Smooth animations**: fade-in, slide-up, hover lift on cards
+- **Gradients** on buttons, headings, and accents
+- **Responsive**: desktop sidebar, mobile drawer with hamburger menu
+- **Loading states**: animated skeletons on every page
+- **Tabbed navigation** on projects (Overview, Subnets, VLANs, Configs, Validation)
 
 ---
 
-## Guide d'utilisation
+## Project Types
 
-### Etape 1 : Creer un projet
+### LAN — Local Area Network (single site)
 
-1. Aller sur le Dashboard
-2. Cliquer **"New Project"**
-3. Remplir le nom, la description, choisir le type (LAN/WAN/LAN+WAN)
-4. Entrer le reseau de base en notation CIDR (ex: `192.168.10.0/24`)
-5. Cliquer **"Create Project"**
+```
+Project "Campus HQ"
+├── IT Department (30 hosts)
+├── Sales Department (20 hosts)
+├── Server Room (10 hosts)
+└── Open Space (50 hosts)
+```
 
-### Etape 2 : Definir la topologie
+Ideal for: a single office, campus, or building. Users add departments directly without creating branches.
 
-**Si LAN :** Ajouter directement des departements sur la page overview du projet.
+### WAN — Wide Area Network (multi-site)
 
-**Si WAN/LAN+WAN :** Creer d'abord des branches (sites), puis dans chaque branche, ajouter des departements.
+```
+Project "National Network"
+├── Branch HQ (Bamako)
+│   ├── IT (30 hosts)
+│   └── Management (10 hosts)
+├── Branch Office (Dakar)
+│   ├── Sales (15 hosts)
+│   └── Support (10 hosts)
+└── Branch Office (Abidjan)
+    └── Open Space (20 hosts)
+```
 
-Pour chaque departement, preciser :
-- Le nom (ex: "IT Department")
-- Le type (IT, Sales, HR, etc.) — determine le VLAN auto-attribue
-- Le nombre d'hotes estimes — determine la taille du sous-reseau
+Ideal for: an enterprise with multiple geographic locations. Each branch represents a physical site.
 
-### Etape 3 : Ajouter les equipements
+### LAN+WAN — Combined
 
-Dans chaque departement, cliquer **"+ Add Device"** et choisir le type d'equipement. Les routeurs, switches et AP recevront un hostname automatique.
-
-### Etape 4 : Generer le plan reseau
-
-1. Aller sur l'onglet **Subnets** > cliquer **"Calculate VLSM"**
-2. Aller sur l'onglet **VLANs** > cliquer **"Auto-suggest VLANs"**
-3. Aller sur l'onglet **Configs** > cliquer **"Generate All Configs"**
-4. Aller sur l'onglet **Validation** > cliquer **"Run Validation"**
-
-### Etape 5 : Exporter
-
-- Copier chaque configuration avec le bouton **Copy**
-- Telecharger chaque config en `.txt` avec le bouton **Download**
-- Coller directement dans le terminal Cisco ou un simulateur (Packet Tracer, GNS3, EVE-NG)
+Same structure as WAN, but with the intent to plan each site's local network in detail. Behavior in the application is identical to WAN.
 
 ---
 
-## Architecture technique
+## User Guide
+
+### Step 1: Create a Project
+
+1. Go to the Dashboard
+2. Click **"New Project"**
+3. Fill in the name, description, choose the type (LAN/WAN/LAN+WAN)
+4. Enter the base network in CIDR notation (e.g., `192.168.10.0/24`)
+5. Click **"Create Project"**
+
+### Step 2: Define the Topology
+
+**If LAN:** Add departments directly on the project overview page.
+
+**If WAN/LAN+WAN:** Create branches (sites) first, then add departments within each branch.
+
+For each department, specify:
+- Name (e.g., "IT Department")
+- Type (IT, Sales, HR, etc.) — determines the auto-assigned VLAN
+- Estimated host count — determines the subnet size
+
+### Step 3: Add Devices
+
+In each department, click **"+ Add Device"** and choose the device type. Routers, switches, and APs will receive an automatic hostname.
+
+### Step 4: Generate the Network Plan
+
+1. Go to **Subnets** tab > click **"Calculate VLSM"**
+2. Go to **VLANs** tab > click **"Auto-suggest VLANs"**
+3. Go to **Configs** tab > click **"Generate All Configs"**
+4. Go to **Validation** tab > click **"Run Validation"**
+
+### Step 5: Export
+
+- Copy each configuration with the **Copy** button
+- Download each config as `.txt` with the **Download** button
+- Paste directly into a Cisco terminal or simulator (Packet Tracer, GNS3, EVE-NG)
+
+---
+
+## Technical Architecture
 
 ```
 ┌─────────────────────────────────────────────────┐
@@ -304,84 +304,84 @@ Dans chaque departement, cliquer **"+ Add Device"** et choisir le type d'equipem
 
 ---
 
-## Stack technique
+## Tech Stack
 
-| Couche | Technologie | Version |
-|--------|------------|---------|
+| Layer | Technology | Version |
+|-------|-----------|---------|
 | Framework | Next.js (App Router + Turbopack) | 16.2 |
-| Langage | TypeScript | 5 |
+| Language | TypeScript | 5 |
 | Styling | Tailwind CSS | 4 |
-| Base de donnees | PostgreSQL via Supabase | - |
+| Database | PostgreSQL via Supabase | - |
 | ORM | Prisma | 6 |
-| Authentification | NextAuth (Auth.js) + Google OAuth | 5 |
-| Icones | Lucide React | - |
+| Authentication | NextAuth (Auth.js) + Google OAuth | 5 |
+| Icons | Lucide React | - |
 | Validation | Zod | - |
-| Utilitaires CSS | clsx + tailwind-merge | - |
-| Deploiement | Vercel | - |
+| CSS Utilities | clsx + tailwind-merge | - |
+| Deployment | Vercel | - |
 
 ---
 
-## Structure du projet
+## Project Structure
 
 ```
 netcraft-ai/
 ├── prisma/
-│   └── schema.prisma              # 10 modeles (User, Project, Branch, Department, Device, Subnet, Vlan, Config, Account, Session)
+│   └── schema.prisma              # 10 models (User, Project, Branch, Department, Device, Subnet, Vlan, Config, Account, Session)
 ├── src/
 │   ├── app/
-│   │   ├── globals.css            # Tailwind v4 + animations keyframes
-│   │   ├── layout.tsx             # Layout racine (fonts, dark mode)
-│   │   ├── page.tsx               # Redirect vers /dashboard
+│   │   ├── globals.css            # Tailwind v4 + keyframe animations
+│   │   ├── layout.tsx             # Root layout (fonts, dark mode)
+│   │   ├── page.tsx               # Redirect to /dashboard
 │   │   ├── (auth)/
-│   │   │   └── login/page.tsx     # Page de connexion Google (glassmorphism)
+│   │   │   └── login/page.tsx     # Google sign-in page (glassmorphism)
 │   │   ├── (app)/
-│   │   │   ├── layout.tsx         # Shell app (sidebar + topbar)
+│   │   │   ├── layout.tsx         # App shell (sidebar + topbar)
 │   │   │   ├── dashboard/
-│   │   │   │   ├── page.tsx       # Statistiques + projets recents
-│   │   │   │   └── loading.tsx    # Squelette de chargement
+│   │   │   │   ├── page.tsx       # Stats + recent projects
+│   │   │   │   └── loading.tsx    # Loading skeleton
 │   │   │   └── projects/
-│   │   │       ├── page.tsx       # Grille de tous les projets
-│   │   │       ├── new/page.tsx   # Formulaire de creation
+│   │   │       ├── page.tsx       # All projects grid
+│   │   │       ├── new/page.tsx   # Creation form
 │   │   │       └── [projectId]/
-│   │   │           ├── page.tsx       # Overview (adapte LAN vs WAN)
-│   │   │           ├── layout.tsx     # Navigation par onglets
-│   │   │           ├── subnets/       # Tableau VLSM
-│   │   │           ├── vlans/         # Tableau VLANs
-│   │   │           ├── configs/       # Visualiseur de configs
-│   │   │           ├── validation/    # Resultats de validation
-│   │   │           └── branches/[branchId]/  # Detail branche (WAN)
-│   │   └── api/                   # 11 endpoints REST
+│   │   │           ├── page.tsx       # Overview (adapts to LAN vs WAN)
+│   │   │           ├── layout.tsx     # Tab navigation
+│   │   │           ├── subnets/       # VLSM table
+│   │   │           ├── vlans/         # VLANs table
+│   │   │           ├── configs/       # Config viewer
+│   │   │           ├── validation/    # Validation results
+│   │   │           └── branches/[branchId]/  # Branch detail (WAN)
+│   │   └── api/                   # 11 REST endpoints
 │   ├── components/
 │   │   ├── layout/                # Sidebar (responsive), Topbar (search, avatar)
-│   │   ├── projects/              # ProjectNav (onglets)
+│   │   ├── projects/              # ProjectNav (tabs)
 │   │   ├── branches/              # AddBranchForm
 │   │   ├── departments/           # AddDepartmentForm (type select, hosts input)
-│   │   ├── devices/               # AddDeviceForm (grille categorisee)
-│   │   ├── vlsm/                  # VlsmPanel (bouton + tableau 11 colonnes)
-│   │   ├── vlans/                 # VlanPanel (suggestion + tableau avec badges)
-│   │   ├── configs/               # ConfigPanel (onglets, numeros de ligne, copier, telecharger)
-│   │   ├── validation/            # ValidationPanel (erreurs/avertissements/recommandations)
-│   │   └── ui/                    # Skeleton, DeleteButton (confirmation)
+│   │   ├── devices/               # AddDeviceForm (categorized grid)
+│   │   ├── vlsm/                  # VlsmPanel (button + 11-column table)
+│   │   ├── vlans/                 # VlanPanel (suggestion + badge table)
+│   │   ├── configs/               # ConfigPanel (tabs, line numbers, copy, download)
+│   │   ├── validation/            # ValidationPanel (errors/warnings/recommendations)
+│   │   └── ui/                    # Skeleton, DeleteButton (with confirmation)
 │   └── lib/
 │       ├── engines/
-│       │   ├── vlsm.ts           # Algorithme VLSM pur
-│       │   ├── vlan.ts           # Suggestion VLANs par type
-│       │   ├── hostname.ts       # Convention nommage Cisco
-│       │   ├── config-switch.ts  # Generateur config switch
-│       │   ├── config-router.ts  # Generateur config routeur
-│       │   ├── config-ap.ts      # Generateur config AP
-│       │   └── validate.ts       # 16 regles de validation
-│       ├── auth.ts               # Config NextAuth v5
-│       ├── db.ts                 # Singleton Prisma
+│       │   ├── vlsm.ts           # Pure VLSM algorithm
+│       │   ├── vlan.ts           # VLAN suggestion by type
+│       │   ├── hostname.ts       # Cisco naming convention
+│       │   ├── config-switch.ts  # Switch config generator
+│       │   ├── config-router.ts  # Router config generator
+│       │   ├── config-ap.ts      # AP config generator
+│       │   └── validate.ts       # 16 validation rules
+│       ├── auth.ts               # NextAuth v5 config
+│       ├── db.ts                 # Prisma singleton
 │       └── utils.ts              # cn() helper
-├── .env.example                   # Template des variables d'environnement
-├── .gitignore                     # .env* ignore, node_modules ignore
+├── .env.example                   # Environment variable template
+├── .gitignore                     # .env* ignored, node_modules ignored
 └── package.json
 ```
 
 ---
 
-## Modele de donnees
+## Data Model
 
 ```
 User (NextAuth)
@@ -390,8 +390,8 @@ User (NextAuth)
     ├── type: LAN | WAN | LAN_WAN
     ├── baseNetwork: "192.168.10.0/24"
     │
-    ├── Branch(es)                    # 1 auto-creee pour LAN, N pour WAN
-    │   ├── name: "Siege"
+    ├── Branch(es)                    # 1 auto-created for LAN, N for WAN
+    │   ├── name: "HQ"
     │   ├── location: "Bamako"
     │   │
     │   └── Department(s)
@@ -402,12 +402,12 @@ User (NextAuth)
     │       ├── subnet → Subnet
     │       │
     │       └── Device(s)
-    │           ├── name: "Switch principal"
+    │           ├── name: "Main Switch"
     │           ├── type: CORE_ROUTER | SWITCH_L2 | SWITCH_L3 | AP | ENDPOINT | ...
-    │           ├── hostname: "SW-HQ-ACCESS-01" (auto-genere)
-    │           └── config → Config (contenu Cisco IOS)
+    │           ├── hostname: "SW-HQ-ACCESS-01" (auto-generated)
+    │           └── config → Config (Cisco IOS content)
     │
-    ├── Subnet(s)                     # Generes par le moteur VLSM
+    ├── Subnet(s)                     # Generated by VLSM engine
     │   ├── networkAddress: "192.168.10.0"
     │   ├── subnetMask: "255.255.255.224"
     │   ├── cidr: 27
@@ -415,7 +415,7 @@ User (NextAuth)
     │   ├── usableHosts: 30
     │   └── utilization: 100 (%)
     │
-    └── Vlan(s)                       # Generes par le moteur VLAN
+    └── Vlan(s)                       # Generated by VLAN engine
         ├── number: 20
         ├── name: "IT"
         └── departments[] (N:1)
@@ -423,157 +423,165 @@ User (NextAuth)
 
 ---
 
-## Les moteurs (engines)
+## Core Engines
 
-Tous les moteurs sont des fonctions TypeScript pures, sans dependance externe, testables unitairement.
+All engines are pure TypeScript functions with zero external dependencies, fully unit-testable.
 
 ### VLSM (`src/lib/engines/vlsm.ts`)
 
-Algorithme :
-1. Recevoir le reseau de base et la liste des departements avec leur nombre d'hotes
-2. Trier les departements par nombre d'hotes decroissant (allocation optimale)
-3. Pour chaque departement, trouver le plus petit bloc en puissance de 2 >= (hotes + 2)
-4. Aligner l'adresse de debut sur la frontiere du bloc
-5. Verifier qu'on ne depasse pas l'espace disponible
-6. Retourner les details complets de chaque sous-reseau
+Algorithm:
+1. Receive the base network and list of departments with host counts
+2. Sort departments by host count descending (optimal allocation)
+3. For each department, find the smallest power-of-2 block >= (hosts + 2)
+4. Align the start address on the block boundary
+5. Verify no overflow beyond the available space
+6. Return complete details for each subnet
 
 ### VLAN (`src/lib/engines/vlan.ts`)
 
-- Mappe chaque type de departement vers un numero de VLAN standard
-- Gere les conflits si plusieurs departements du meme type existent (incremente)
-- Ajoute toujours VLAN 99 (Native) et VLAN 999 (Blackhole)
+- Maps each department type to a standard VLAN number
+- Handles conflicts when multiple departments of the same type exist (increments)
+- Always adds VLAN 99 (Native) and VLAN 999 (Blackhole)
 
 ### Hostname (`src/lib/engines/hostname.ts`)
 
-- Format : `[PREFIXE_TYPE]-[CODE_SITE]-[ROLE]-[NUMERO]`
-- Prefixes : RTR (routeur), SW (switch), AP (point d'acces)
-- Incremente automatiquement le numero si le hostname existe deja
+- Format: `[TYPE_PREFIX]-[SITE_CODE]-[ROLE]-[NUMBER]`
+- Prefixes: RTR (router), SW (switch), AP (access point)
+- Auto-increments the number if a hostname already exists
 
 ### Config Switch (`src/lib/engines/config-switch.ts`)
 
-Genere une configuration complete Cisco IOS incluant :
+Generates a complete Cisco IOS configuration including:
 - `hostname`, `service password-encryption`, `enable secret`
-- Declaration de tous les VLANs
-- Ports d'acces avec `switchport mode access` et VLAN correct
-- Port trunk avec `switchport trunk allowed vlan`
-- Ports inutilises : `switchport access vlan 999` + `shutdown`
+- All VLAN declarations
+- Access ports with `switchport mode access` and correct VLAN
+- Trunk port with `switchport trunk allowed vlan`
+- Unused ports: `switchport access vlan 999` + `shutdown`
 - `spanning-tree mode rapid-pvst`
-- Interface VLAN management avec IP
+- Management VLAN interface with IP
 
 ### Config Router (`src/lib/engines/config-router.ts`)
 
-Genere :
-- Sous-interfaces sur GigabitEthernet0/0 pour chaque VLAN (router-on-a-stick)
-- Pools DHCP avec `network`, `default-router`, `dns-server`
-- Adresses exclues (`ip dhcp excluded-address`)
-- SSH v2 avec `crypto key generate rsa modulus 2048`
+Generates:
+- Router-on-a-stick sub-interfaces on GigabitEthernet0/0 for each VLAN
+- DHCP pools with `network`, `default-router`, `dns-server`
+- Excluded addresses (`ip dhcp excluded-address`)
+- SSH v2 with `crypto key generate rsa modulus 2048`
 - `ip route 0.0.0.0 0.0.0.0 [next-hop]`
-- Banniere et securite des lignes
+- Banner and line security
 
 ### Config AP (`src/lib/engines/config-ap.ts`)
 
-Genere :
-- SSID et `authentication open`
+Generates:
+- SSID with `authentication open`
 - `encryption mode ciphers aes-ccm`
 - WPA2-PSK
-- Radios `dot11radio 0` (2.4 GHz) et `dot11radio 1` (5 GHz)
-- Interface BVI pour management
+- Radios `dot11radio 0` (2.4 GHz) and `dot11radio 1` (5 GHz)
+- BVI interface for management
 
 ### Validation (`src/lib/engines/validate.ts`)
 
-16 regles organisees en 3 niveaux de severite :
-- **Erreurs** : problemes bloquants (pas de reseau, debordement, chevauchements)
-- **Avertissements** : risques de securite (VLAN 1, pas de secret, pas de gateway)
-- **Recommandations** : bonnes pratiques (SSH, timeouts, banniere, ports inutilises)
+16 rules organized in 3 severity levels:
+- **Errors**: blocking issues (no network, overflow, overlaps)
+- **Warnings**: security risks (VLAN 1, no secret, no gateway)
+- **Recommendations**: best practices (SSH, timeouts, banner, unused ports)
 
 ---
 
-## Installation locale
+## Local Installation
 
-### Prerequis
+### Prerequisites
 
 - **Node.js 18+**
-- Un projet **[Supabase](https://supabase.com)** (le tier gratuit suffit)
-- Des credentials **Google OAuth** depuis [Google Cloud Console](https://console.cloud.google.com)
+- A **[Supabase](https://supabase.com)** project (free tier works fine)
+- **Google OAuth** credentials from [Google Cloud Console](https://console.cloud.google.com)
 
-### 1. Cloner le repo
+### 1. Clone the repo
 
 ```bash
-git clone https://github.com/MakanTraore/netcraft-ai.git
+git clone https://github.com/traoremakan483-prog/netcraft-ai.git
 cd netcraft-ai
 npm install
 ```
 
-### 2. Configurer les variables d'environnement
+### 2. Configure environment variables
 
 ```bash
 cp .env.example .env.local
 ```
 
-Remplir `.env.local` :
+Fill in `.env.local`:
 
 ```env
-DATABASE_URL="postgresql://postgres:VOTRE_MOT_DE_PASSE@db.VOTRE_PROJET.supabase.co:5432/postgres"
-AUTH_SECRET="generer-avec: openssl rand -base64 32"
+DATABASE_URL="postgresql://postgres:YOUR_PASSWORD@db.YOUR_PROJECT.supabase.co:5432/postgres"
+DIRECT_URL="postgresql://postgres:YOUR_PASSWORD@db.YOUR_PROJECT.supabase.co:5432/postgres"
+AUTH_SECRET="generate-with: openssl rand -base64 32"
 NEXTAUTH_URL="http://localhost:3000"
-GOOGLE_CLIENT_ID="votre-client-id.apps.googleusercontent.com"
-GOOGLE_CLIENT_SECRET="GOCSPX-votre-secret"
+GOOGLE_CLIENT_ID="your-client-id.apps.googleusercontent.com"
+GOOGLE_CLIENT_SECRET="GOCSPX-your-secret"
 ```
 
-### 3. Configurer Google OAuth
+### 3. Set up Google OAuth
 
-1. Aller sur Google Cloud Console > APIs & Services > Credentials
-2. Creer un **OAuth 2.0 Client ID** (type: Application Web)
-3. Ajouter l'URI de redirection : `http://localhost:3000/api/auth/callback/google`
-4. Copier le Client ID et le Client Secret dans `.env.local`
+1. Go to Google Cloud Console > APIs & Services > Credentials
+2. Create an **OAuth 2.0 Client ID** (type: Web Application)
+3. Add the redirect URI: `http://localhost:3000/api/auth/callback/google`
+4. Copy the Client ID and Client Secret into `.env.local`
 
-### 4. Initialiser la base de donnees
+### 4. Initialize the database
 
 ```bash
 npx prisma db push
 ```
 
-### 5. Lancer le serveur
+### 5. Start the dev server
 
 ```bash
 npm run dev
 ```
 
-Ouvrir [http://localhost:3000](http://localhost:3000) et se connecter avec Google.
+Open [http://localhost:3000](http://localhost:3000) and sign in with Google.
 
 ---
 
-## Deploiement
+## Deployment
 
-L'application est prete pour **Vercel** :
+The application is ready for **Vercel**:
 
-1. Connecter le repo GitHub a Vercel
-2. Ajouter les variables d'environnement dans les settings Vercel
-3. Ajouter l'URI de redirection de production dans Google Cloud Console :
-   `https://votre-domaine.vercel.app/api/auth/callback/google`
-4. Deployer
-
----
-
-## Securite
-
-- Tous les secrets sont dans `.env.local` qui est **git-ignore** — jamais commite
-- Seul `.env.example` (avec des placeholders) est dans le repo
-- Authentification via Google OAuth (NextAuth v5, strategie JWT)
-- Toutes les routes API verifient la session et l'ownership des ressources
-- Validation Zod sur toutes les entrees utilisateur
-- Aucun credential n'est expose dans le code source
+1. Connect the GitHub repo to Vercel
+2. Add environment variables in Vercel settings:
+   - `DATABASE_URL` (use the Supabase **Session Pooler** URL for serverless)
+   - `DIRECT_URL` (use the Supabase **Direct** connection URL)
+   - `AUTH_SECRET`
+   - `AUTH_TRUST_HOST=true`
+   - `AUTH_URL=https://your-domain.vercel.app`
+   - `GOOGLE_CLIENT_ID`
+   - `GOOGLE_CLIENT_SECRET`
+3. Add the production redirect URI in Google Cloud Console:
+   `https://your-domain.vercel.app/api/auth/callback/google`
+4. Deploy
 
 ---
 
-## Auteur
+## Security
+
+- All secrets are stored in `.env.local` which is **git-ignored** — never committed
+- Only `.env.example` (with placeholders) is tracked in the repo
+- Authentication via Google OAuth (NextAuth v5, JWT strategy)
+- All API routes verify session and resource ownership
+- Zod validation on all user inputs
+- No credentials exposed in source code
+
+---
+
+## Author
 
 **Makan Traore**
-- Email : traoremakan483@gmail.com
-- GitHub : [@MakanTraore](https://github.com/MakanTraore)
+- Email: traoremakan483@gmail.com
+- GitHub: [@traoremakan483-prog](https://github.com/traoremakan483-prog)
 
 ---
 
-## Licence
+## License
 
-MIT — Libre d'utilisation, modification et distribution.
+MIT — Free to use, modify, and distribute.
